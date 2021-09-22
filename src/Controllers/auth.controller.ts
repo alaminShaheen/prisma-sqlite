@@ -6,45 +6,23 @@ import jwt from "jsonwebtoken";
 import config from "../Config/config";
 import { User as UserModel, PrismaClient, Prisma } from "@prisma/client";
 import UserServices from "../Services/user.service";
+import HttpException from "../Exceptions/httpException";
 
 const { user: User } = new PrismaClient();
 
 const userInfo = Prisma.validator<Prisma.UserSelect>()({
     password: false,
-})
+});
 
 const register = async (req: Request, res: Response) => {
-    const { Email, Password, LastName, FirstName } = req?.body;
-    if (
-        !Email ||
-        !Password ||
-        !LastName ||
-        !FirstName ||
-        typeof Email !== "string" ||
-        typeof Password !== "string" ||
-        typeof LastName !== "string" ||
-        typeof FirstName !== "string"
-    ) {
-        return res.status(400).json({ message: "Invalid request" });
-    }
-    const _emailExists = await UserServices.findIfUserEmailExists(Email);
-    if (_emailExists) return res.status(400).json({ message: "User with email already exists" });
-    else {
-        try {
-            const _newUser = await UserServices.createUser(req?.body);
-            logging.info(`Created new user ${_newUser.id} ...`);
-            return res.status(201).json({
-                Email: _newUser.Email,
-                Id: _newUser._id,
-                CreatedAt: _newUser.CreatedAt,
-                LastName: _newUser.LastName,
-                FirstName: _newUser.FirstName,
-            });
-        } catch (error) {
-            const result = error as Error;
-            logging.error(error);
-            return res.status(500).json({ message: result.message });
-        }
+    try {
+        const _emailExists = await UserServices.findIfUserEmailExists(req.body.Email);
+        if (_emailExists) return res.status(400).json({ message: "User with email already exists" });
+        const _newUser = await UserServices.createUser(req.body);
+        return res.status(201).json(_newUser);
+    } catch (error) {
+        const _error = error as HttpException;
+        return res.status(_error.status).json(_error.message);
     }
 };
 
@@ -63,7 +41,9 @@ const login = async (req: Request, res: Response) => {
             const newRefreshToken = await Token.create({ Value: refreshToken });
             const fetchedUser = await User.findById(user._id, { Password: false });
             // await User.findById({ _id: user._id }, { projection: { Password: false } });
-            return res.status(200).json({ AccessToken: accessToken, RefreshToken: newRefreshToken.Value, User: fetchedUser });
+            return res
+                .status(200)
+                .json({ AccessToken: accessToken, RefreshToken: newRefreshToken.Value, User: fetchedUser });
         } else {
             return res.status(403).json({ message: "Invalid email or password" });
         }
