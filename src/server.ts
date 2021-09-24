@@ -4,10 +4,10 @@ import cors from "cors";
 import express from "express";
 import http from "http";
 import dotenv from "dotenv";
-import { answerRouter } from "./Routes/answer.routes";
+// import { answerRouter } from "./Routes/answer.routes";
 import { authRouter } from "./Routes/auth.routes";
 import { protectedRouter } from "./Routes/protected.routes";
-import { questionRouter } from "./Routes/question.routes";
+// import { questionRouter } from "./Routes/question.routes";
 import { testRouter } from "./Routes/test.routes";
 
 const router = express();
@@ -34,8 +34,8 @@ router.use(cors());
 
 // Routes
 router.use("/", testRouter);
-router.use("/questions", questionRouter);
-router.use("/answers", answerRouter);
+// router.use("/questions", questionRouter);
+// router.use("/answers", answerRouter);
 router.use("/auth", authRouter);
 router.use("/", protectedRouter);
 

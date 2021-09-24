@@ -40,16 +40,17 @@ const deleteRefreshToken = async (token: string) => {
 
 const refreshToken = async (token: string) => {
     if (!token) throw new HttpException(StatusCodes.BAD_REQUEST, "Token is required");
+    let _newAccessToken = "",
+        _newRefreshToken = "";
     jwt.verify(token, config.token.refreshTokenSecret, async (err: any, user: any) => {
         if (err) {
             logging.error(err);
             throw new HttpException(StatusCodes.FORBIDDEN, "Invalid refresh token");
         } else {
             try {
-                const _newAccessToken = generateAccessToken(user);
+                _newAccessToken = generateAccessToken(user);
                 await deleteRefreshToken(token);
-                const _newRefreshToken = await createRefreshToken(user);
-                return { accessToken: _newAccessToken, refreshToken: _newRefreshToken };
+                _newRefreshToken = await createRefreshToken(user);
             } catch (error: any) {
                 logging.error(error);
                 if (error.status && error.message) {
@@ -60,6 +61,7 @@ const refreshToken = async (token: string) => {
             }
         }
     });
+    return { accessToken: _newAccessToken, refreshToken: _newRefreshToken };
 };
 
 const TokenServices = { createRefreshToken, generateAccessToken, generateRefreshToken, refreshToken };

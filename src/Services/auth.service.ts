@@ -142,6 +142,6 @@ const logout = async (refreshToken: string) => {
     }
 };
 
-const UserServices = { findIfUserEmailExists, register, login, logout };
+const AuthServices = { findIfUserEmailExists, register, login, logout };
 
-export default UserServices;
+export default AuthServices;
