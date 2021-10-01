@@ -1,13 +1,12 @@
-import express from "express";
-import answerController from "../Controllers/answer.controller";
-// import AuthMiddleware from "../Middlewares/auth.middleware";
+// import express from "express";
+// // import AuthMiddleware from "../Middlewares/auth.middleware";
 
-const router = express.Router();
+// const router = express.Router();
 
-// router.use(AuthMiddleware.authenticateToken);
+// // router.use(AuthMiddleware.authenticateToken);
 
 
-router
-.post("/:answerId", answerController.create)
+// router
+// .post("/:answerId", answerController.create)
 
-export { router as answerRouter };
+// export { router as answerRouter };

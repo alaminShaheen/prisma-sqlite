@@ -14,6 +14,7 @@ model Answer {
   id          String   @id @default(uuid())
   description String
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
   question    Question @relation(fields: [questionId], references: [id])
   questionId  String
   createdBy   User     @relation(fields: [userId], references: [id])
@@ -26,6 +27,7 @@ model Question {
   description String
   answers     Answer[]
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
   createdBy   User     @relation(fields: [userId], references: [id])
   userId      String   @unique
 }
@@ -37,6 +39,7 @@ model User {
   lastName  String
   password  String
   createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
   questions Question[]
   answers   Answer[]
 }
